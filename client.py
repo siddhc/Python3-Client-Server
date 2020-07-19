@@ -56,7 +56,7 @@ def main():
     :return: None
     '''
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((HOST_CLIENT, PORT_CLIENT))
+        s.connect((HOST_SERVER, PORT_SERVER))
         k = 0  # Non-mandatory counter to track of number of times messages are sent.
         t1 = time.time()
         t = threading.Thread(target=receiving_threaded, args=(s,))
@@ -69,7 +69,7 @@ def main():
                 print(f'k = {k}: ', end="")
                 t1 = t2
                 message_string = "Act now"
-                print("Sending <", message_string, "> to server <", str(HOST_CLIENT)+'_'+str(PORT_CLIENT), "> @ ", str(time.time()))
+                print("Sending <", message_string, "> to server <", str(HOST_SERVER)+'_'+str(PORT_SERVER), "> @ ", str(time.time()))
                 network_send(s, message_string)
                 time.sleep(0.01)  # Precautionary delay for received_message to get teh message in receiving_threaded.
                 print(f'received_message = {received_message}')
