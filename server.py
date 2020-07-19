@@ -14,15 +14,27 @@ number_of_connected_clients = 0
 
 
 def network_receive(socket_object, size=1024):
+    '''
+    Receives message_object from network.
+    :param socket_object: Socket that receives the data_object.
+    :param size: Size of message_object. Defaults to 1024 bytes.
+    :return: message_object that is obtained after loading the received pickle from the network.
+    '''
     try:
-        data = pickle.loads(socket_object.recv(size))
+        message_object = pickle.loads(socket_object.recv(size))
     except EOFError as e:
         print("EOFError. Program will continue.")
         return b''
-    return data
+    return message_object
 
 
 def network_send(socket_object, message_object):
+    '''
+    Sends message_object to the network.
+    :param socket_object: Socket object through message_object is sent.
+    :param message_object: The object that is pickled and sent to the network.
+    :return: None
+    '''
     socket_object.sendall(pickle.dumps(message_object))
 
 
