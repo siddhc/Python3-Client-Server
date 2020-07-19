@@ -4,8 +4,8 @@ import socket
 import time
 import threading
 
-HOST = '127.0.0.1'  # The server's hostname or IP address
-PORT = 51232        # The port used by the server
+HOST_CLIENT = '127.0.0.1'  # The server's hostname or IP address
+PORT_CLIENT = 51232        # The port used by the server
 
 
 def receiving_threaded(s):
@@ -29,7 +29,7 @@ def main():
     :return: None
     '''
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((HOST, PORT))
+        s.connect((HOST_CLIENT, PORT_CLIENT))
         k = 0  # Non-mandatory counter to track of number of times messages are sent.
         t1 = time.time()
         t = threading.Thread(target=receiving_threaded, args=(s,))
@@ -41,7 +41,7 @@ def main():
                 k = k + 1
                 print(f'k = {k}: ', end="")
                 t1 = t2
-                print("Sending <Hello, world> to server <", str(HOST)+'_'+str(PORT), "> @ ", str(time.time()))
+                print("Sending <Hello, world> to server <", str(HOST_CLIENT)+'_'+str(PORT_CLIENT), "> @ ", str(time.time()))
                 s.sendall(b'Hello, world')
         t.join()
 

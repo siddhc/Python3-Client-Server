@@ -4,8 +4,8 @@ import socket
 import threading
 import time
 
-HOST = ''  # Use '127.0.0.1' for localhost. Use '' for outside host.
-PORT = 51232  # The port used by the server
+HOST_SERVER = ''  # Use '127.0.0.1' for localhost. Use '' for outside host.
+PORT_SERVER = 51232  # The port used by the server
 
 dictionary_of_connections = {}  # Maintains the record of connected clients
                                 # Structure: {client_addr_str: client_conn_object}
@@ -58,7 +58,7 @@ def main():
     global number_of_connected_clients
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         lock = threading.Lock()  # Safety against race condition, as the thread(threaded_client) uses a global variable.
-        s.bind((HOST, PORT))
+        s.bind((HOST_SERVER, PORT_SERVER))
         s.listen()
         print("Server started.")
         while True:
