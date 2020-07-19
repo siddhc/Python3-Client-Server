@@ -5,8 +5,8 @@ import time
 import threading
 import pickle
 
-HOST_CLIENT = '127.0.0.1'  # The server's hostname or IP address
-PORT_CLIENT = 51232        # The port used by the server
+HOST_SERVER = '127.0.0.1'  # The server's hostname or IP address
+PORT_SERVER = 51232        # The port used by the server
 
 received_message = None
 
