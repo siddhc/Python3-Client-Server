@@ -8,6 +8,7 @@ import pickle
 HOST_CLIENT = '127.0.0.1'  # The server's hostname or IP address
 PORT_CLIENT = 51232        # The port used by the server
 
+received_message = None
 
 def network_receive(socket_object, size=1024):
     '''
@@ -35,16 +36,16 @@ def network_send(socket_object, message_object):
 
 
 def receiving_threaded(s):
+    global received_message
     '''
-    Receives messages from the server, anytime.
+    Receives messages from the server, anytime. This thread is useful when data from server is expected anytime.
     :param s: Socket object that connects to the server.
     :return: None
     '''
     with s:
         while True:
-            data = network_receive(s)
-            print('Received <', data, '> from server @ ', str(time.time()))
-            if not data:
+            received_message = network_receive(s)
+            if not received_message:
                 break
 
 
@@ -70,6 +71,8 @@ def main():
                 message_string = "Act now"
                 print("Sending <", message_string, "> to server <", str(HOST_CLIENT)+'_'+str(PORT_CLIENT), "> @ ", str(time.time()))
                 network_send(s, message_string)
+                time.sleep(0.01)  # Precautionary delay for received_message to get teh message in receiving_threaded.
+                print(f'received_message = {received_message}')
         t.join()
 
 
