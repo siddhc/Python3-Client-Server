@@ -3,9 +3,23 @@
 import socket
 import time
 import threading
+import pickle
 
 HOST_CLIENT = '127.0.0.1'  # The server's hostname or IP address
 PORT_CLIENT = 51232        # The port used by the server
+
+
+def network_receive(socket_object, size=1024):
+    try:
+        data = pickle.loads(socket_object.recv(size))
+    except EOFError as e:
+        print("EOFError. Program will continue.")
+        return b''
+    return data
+
+
+def network_send(socket_object, message_object):
+    socket_object.sendall(pickle.dumps(message_object))
 
 
 def receiving_threaded(s):
@@ -16,7 +30,7 @@ def receiving_threaded(s):
     '''
     with s:
         while True:
-            data = s.recv(1024)
+            data = network_receive(s)
             print('Received <', data, '> from server @ ', str(time.time()))
             if not data:
                 break
@@ -41,8 +55,9 @@ def main():
                 k = k + 1
                 print(f'k = {k}: ', end="")
                 t1 = t2
-                print("Sending <Hello, world> to server <", str(HOST_CLIENT)+'_'+str(PORT_CLIENT), "> @ ", str(time.time()))
-                s.sendall(b'Hello, world')
+                message_string = "Act now"
+                print("Sending <", message_string, "> to server <", str(HOST_CLIENT)+'_'+str(PORT_CLIENT), "> @ ", str(time.time()))
+                network_send(s, message_string)
         t.join()
 
 

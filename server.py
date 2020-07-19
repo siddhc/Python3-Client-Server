@@ -3,6 +3,7 @@
 import socket
 import threading
 import time
+import pickle
 
 HOST_SERVER = ''  # Use '127.0.0.1' for localhost. Use '' for outside host.
 PORT_SERVER = 51232  # The port used by the server
@@ -10,6 +11,19 @@ PORT_SERVER = 51232  # The port used by the server
 dictionary_of_connections = {}  # Maintains the record of connected clients
                                 # Structure: {client_addr_str: client_conn_object}
 number_of_connected_clients = 0
+
+
+def network_receive(socket_object, size=1024):
+    try:
+        data = pickle.loads(socket_object.recv(size))
+    except EOFError as e:
+        print("EOFError. Program will continue.")
+        return b''
+    return data
+
+
+def network_send(socket_object, message_object):
+    socket_object.sendall(pickle.dumps(message_object))
 
 
 def threaded_client(conn, lock):
@@ -23,7 +37,7 @@ def threaded_client(conn, lock):
     global number_of_connected_clients
     with conn:
         while True:
-            data = conn.recv(1024)  # Message received from client.
+            data = network_receive(conn)  # Message received from client.
             client_addr_str = str(conn.getpeername()[0])+'_'+str(conn.getpeername()[1])
             print("Received <", data, "> from client <", client_addr_str,"> @ ", str(time.time()))
             if not data:  # break if b'' is received from client.
@@ -37,7 +51,7 @@ def threaded_client(conn, lock):
                 if client_conn is not conn:  # Message of a client is sent to all other clients but not to itself.
                     try:
                         if dictionary_of_connections[client_addr_str] is not None:
-                            client_conn.sendall(data)
+                            network_send(client_conn, data)
                             print("Sending <", data, "> to client <", client_addr_str, "> @ ", str(time.time()))
                     except:
                         number_of_connected_clients -= 1
